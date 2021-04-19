@@ -20,17 +20,18 @@ class Matrix(val size: Int) {
 
   /** Populates the matrix with new seeds at the selected positions.
    *
+   * @param positions where to place the new tiles.
+   *
    * @return matrix with newly placed seeds.
    */
+  // FIXME: Does not populate as it should
   def populateMatrix(tilesToSeed: List[(Int, Int)]):
-      Array[Array[Int]] = {
-    tilesToSeed match {
-      case Nil => this.matrix
-      case head :: tail => {
-        val tileValue = (scala.util.Random.nextInt(2) * 2) + 2 // 2 or 4
-        this.matrix(head._1)(head._2) = tileValue
-        populateMatrix(tail)
-      }
+      Array[Array[Int]] = tilesToSeed match {
+    case Nil => this.matrix
+    case head :: tail => {
+      val tileValue = Array(2, 4)(scala.util.Random.nextInt(2))
+      this.matrix(head._1)(head._2) = tileValue
+      populateMatrix(tail)
     }
   }
 
@@ -48,19 +49,19 @@ class Matrix(val size: Int) {
    *
    * @return list of free coordinates where to insert a tile.
    */
-  // FIXME: Comparisons in case do not seem to be fine
-  private def findAvailablePositions(x: Int,
-                             y: Int): List[(Int, Int)] = {
+  private def findAvailablePositions(m: Array[Array[Int]],
+                                     x: Int,
+                                     y: Int): List[(Int, Int)] = {
     // Iterate through matrix.
     val edge = size - 1
     val coordinates = (x, y) match {
-      case x == edge && y == edge => Nil
-      case y == edge => findAvailablePositions(x + 1, 0)
-      case _ => findAvailablePositions(x, y + 1)
+      case (x, y) if x == edge && y == edge => Nil
+      case (_, y) if y == edge => findAvailablePositions(m, x + 1, 0)
+      case _ => findAvailablePositions(m, x, y + 1)
     }
 
     // Append empty tile to list of free coordinates.
-    if (this.matrix(x)(y) == 0) ((x, y) :: coordinates)
+    if (m(x)(y) == 0) ((x, y) :: coordinates)
     else coordinates
   }
 
@@ -75,22 +76,22 @@ class Matrix(val size: Int) {
    * @return list of tiles to occupy.
    */
   // FIXME: Looks like the thingies do not exists
-  private def positionsToSeed(seeds: Int,
-                              freeTiles: List[(Int, Int)],
-                              i: Int): List[Int] = {
-    if (seeds == 0) Nil
-    else {
-      (freeTiles, i) match {
-        case (ft.length < seeds, i) => positionsToSeed(ft.length, ft, i)
-        case (ft.length >= seeds, -1) => {
-          val coord = scala.util.Random.nextInt(ft.length - (s - 1))
-          positionsToSeed(seeds, ft, coord)
-        }
-        case (head :: tail, 0) => head :: positionsToSeed(seeds - 1, tail, -1)
-        case (head :: tail, i) => positionsToSeed(seeds, tail, i - 1)
-      }
-    }
-  }
+  //private def positionsToSeed(seeds: Int,
+  //                            freeTiles: List[(Int, Int)],
+  //                            i: Int): List[Int] = {
+  //  if (seeds == 0) Nil
+  //  else {
+  //    (freeTiles, i) match {
+  //      case (ft.length < seeds, i) => positionsToSeed(ft.length, ft, i)
+  //      case (ft.length >= seeds, -1) => {
+  //        val coord = scala.util.Random.nextInt(ft.length - (s - 1))
+  //        positionsToSeed(seeds, ft, coord)
+  //      }
+  //      case (head :: tail, 0) => head :: positionsToSeed(seeds - 1, tail, -1)
+  //      case (head :: tail, i) => positionsToSeed(seeds, tail, i - 1)
+  //    }
+  //  }
+  //}
 }
 
 
@@ -100,6 +101,7 @@ object Matrix {
   val MINSIZE = 4
   val MAXSIZE = 10
 
+  // TODO: Could create custom exception
   def apply(size: Int): Option[Matrix] = {
     try {
       if (MINSIZE <= size && size <= MAXSIZE) {
@@ -123,13 +125,27 @@ object Matrix {
    * @return True if matrices have same size and have same values. False
    *         otherwise.
    */
-  def compareMatrices(m1: Any, m2: Any): Boolean = {
-    (m1, m2) match {
-      case (a: Int, b: Int) => a == b
-      case (headA :: tailA, headB :: tailB) =>
-        compareMatrices(headA, headB) &&
-        compareMatrices(tailB, tailB)
-      case _ => true
-    }
+  // FIXME: Does not seem to work very well, now that I think ab it, where's the
+  // false?
+  // def compareMatrices[A](m1: M[A], m2: M[A]): Boolean = (m1, m2) match {
+  //   // case ((h1 :: t1): Array[Array[Int]], h2 :: t2: Array[Array[Int]]) =>  {}
+  //   case (m1: Array[Int], m2: Array[Int]) if m1.length != m2.length => {
+  //     val m = m1.zip(m2)
+  //     m.map{case (a, b) => a == b}
+  //     m.reduce((a1, a2) => a1 && a2)
+  //     m
+  //   }
+  //   case _ => false
+  // }
+
+  /** Transforms an array into an string output, even if it is multi-dimesional.
+   *
+   * @param array to be transformed to strig.
+   *
+   * @return array transformed to string.
+   */
+  def matrixToString(x: Any): String = x match {
+    case arr: Array[_] => arr.map(matrixToString).mkString("["," ","]")
+    case _ => x.toString
   }
 }
