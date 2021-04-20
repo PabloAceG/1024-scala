@@ -1,6 +1,7 @@
 /** A matrix that contains the tails of the game.
  *
- * @param size Size of the NxN square matrix.
+ * @constructor create a new matrix with a size.
+ * @param size size of the NxN square matrix.
  */
 class Matrix(val size: Int) {
   /** Square matrix containing the number tiles of the game. */
@@ -75,23 +76,22 @@ class Matrix(val size: Int) {
    *
    * @return list of tiles to occupy.
    */
-  // FIXME: Looks like the thingies do not exists
-  //private def positionsToSeed(seeds: Int,
-  //                            freeTiles: List[(Int, Int)],
-  //                            i: Int): List[Int] = {
-  //  if (seeds == 0) Nil
-  //  else {
-  //    (freeTiles, i) match {
-  //      case (ft.length < seeds, i) => positionsToSeed(ft.length, ft, i)
-  //      case (ft.length >= seeds, -1) => {
-  //        val coord = scala.util.Random.nextInt(ft.length - (s - 1))
-  //        positionsToSeed(seeds, ft, coord)
-  //      }
-  //      case (head :: tail, 0) => head :: positionsToSeed(seeds - 1, tail, -1)
-  //      case (head :: tail, i) => positionsToSeed(seeds, tail, i - 1)
-  //    }
-  //  }
-  //}
+  private def positionsToSeed(seeds: Int,
+                              freeTiles: List[(Int, Int)],
+                              i: Int): List[(Int, Int)] = {
+    if (seeds == 0) Nil
+    else {
+      (freeTiles, i) match {
+        case (ft, i) if (ft.length < seeds) => positionsToSeed(ft.length, ft, i)
+        case (ft, -1) if (ft.length >= seeds) => {
+          val coord = scala.util.Random.nextInt(ft.length - (seeds - 1))
+          positionsToSeed(seeds, ft, coord)
+        }
+        case (head :: tail, 0) => head :: positionsToSeed(seeds - 1, tail, -1)
+        case (head :: tail, i) => positionsToSeed(seeds, tail, i - 1)
+      }
+    }
+  }
 }
 
 
@@ -125,18 +125,16 @@ object Matrix {
    * @return True if matrices have same size and have same values. False
    *         otherwise.
    */
-  // FIXME: Does not seem to work very well, now that I think ab it, where's the
-  // false?
-  // def compareMatrices[A](m1: M[A], m2: M[A]): Boolean = (m1, m2) match {
-  //   // case ((h1 :: t1): Array[Array[Int]], h2 :: t2: Array[Array[Int]]) =>  {}
-  //   case (m1: Array[Int], m2: Array[Int]) if m1.length != m2.length => {
-  //     val m = m1.zip(m2)
-  //     m.map{case (a, b) => a == b}
-  //     m.reduce((a1, a2) => a1 && a2)
-  //     m
-  //   }
-  //   case _ => false
-  // }
+  // TODO: Add comprobation for size
+  def compareMatrices[A](m1: Array[Array[Int]],
+                         m2: Array[Array[Int]]): Boolean = {
+    val flatMatrix1 = m1.flatMap(_.toArray)
+    val flatMatrix2 = m2.flatMap(_.toArray)
+    flatMatrix1
+      .zip(flatMatrix2)
+      .map{case (a, b) => a == b}
+      .reduce((x0, x1) => x0 && x1)
+  }
 
   /** Transforms an array into an string output, even if it is multi-dimesional.
    *

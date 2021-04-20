@@ -3,11 +3,53 @@ import org.scalatest.PrivateMethodTester
 
 class MatrixTest extends AnyFunSuite with PrivateMethodTester {
 
-  test("comparing two equal matrices (all 0s) should be fine") (pending)
+  test("comparing two equal matrices (all 0s)") {
+    val m1 = Array(
+      Array(0, 0, 0, 0),
+      Array(0, 0, 0, 0),
+      Array(0, 0, 0, 0),
+      Array(0, 0, 0, 0)
+    )
+    val m2 = Array(
+      Array(0, 0, 0, 0),
+      Array(0, 0, 0, 0),
+      Array(0, 0, 0, 0),
+      Array(0, 0, 0, 0)
+    )
+    assert(Matrix.compareMatrices[Array[Array[Int]]](m1, m2))
+  }
 
-  test("comparing two equal matrices (\"ramdom\" pattern) should be fine") (pending)
+  test("comparing two equal matrices (\"random\" pattern) should be fine") {
+    val m1 = Array(
+      Array(1, 0, 0, 9),
+      Array(0, 4, 0, 8),
+      Array(6, 7, 3, 0),
+      Array(0, 9, 0, 2)
+    )
+    val m2 = Array(
+      Array(1, 0, 0, 9),
+      Array(0, 4, 0, 8),
+      Array(6, 7, 3, 0),
+      Array(0, 9, 0, 2)
+    )
+    assert(Matrix.compareMatrices[Array[Array[Int]]](m1, m2))
+  }
 
-  test("comparing two different matrices does not pass") (pending)
+  test("comparing two different matrices does not pass") {
+    val m1 = Array(
+      Array(0, 0, 0, 0),
+      Array(0, 0, 0, 0),
+      Array(0, 0, 0, 0),
+      Array(0, 0, 0, 0)
+    )
+    val m2 = Array(
+      Array(1, 0, 0, 9),
+      Array(0, 4, 0, 8),
+      Array(6, 7, 3, 0),
+      Array(0, 9, 0, 2)
+    )
+    assert(!Matrix.compareMatrices[Array[Array[Int]]](m1, m2))
+  }
 
   test("should not compare matrices of different sizes") (pending)
 
@@ -48,8 +90,7 @@ class MatrixTest extends AnyFunSuite with PrivateMethodTester {
       val m = Matrix(i).get.matrix
       val testMatrix = Array.fill(i){Array.fill(i){0}}
 
-      // TODO
-      // assert(Matrix.compareMatrices(m, testMatrix))
+      assert(Matrix.compareMatrices(m, testMatrix))
     }
   }
 
@@ -98,6 +139,7 @@ class MatrixTest extends AnyFunSuite with PrivateMethodTester {
 
   test("select positions to seed") (pending)
 
+  // FAIL & BUG: Need to fix the population problem
   test("populate matrix's first column when it's empty") {
     // 0 0 0 0     2 0 0 0
     // 0 0 0 0 ==> 2 0 0 0
@@ -113,12 +155,12 @@ class MatrixTest extends AnyFunSuite with PrivateMethodTester {
       println(Matrix.matrixToString(populatedMatrix))
       println("----------------")
 
-      // TODO
-      // assert(Matrix.compareMatrices(m.matrix, populatedMatrix))
+      assert(Matrix.compareMatrices(m.matrix, populatedMatrix))
     }
   }
 
   // TODO: Adapt to all accepted sizes
+  // FAIL & BUG: Need to fix the population problem
   test("populate matrix's first row when it's empty") {
     // 0 0 0 0     2 2 2 2
     // 0 0 0 0 ==> 0 0 0 0
@@ -133,8 +175,8 @@ class MatrixTest extends AnyFunSuite with PrivateMethodTester {
       Array(0, 0, 0, 0)
     )
 
-    // TODO
-    // assert(Matrix.compareMatrices(m.populateMatrix(tilesToSeed), populatedMatrix))
+    assert(Matrix.compareMatrices(m.populateMatrix(tilesToSeed),
+                                  populatedMatrix))
   }
 
   test("populate matrix with content in it") (pending)
