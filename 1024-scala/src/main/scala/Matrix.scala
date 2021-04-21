@@ -25,14 +25,13 @@ class Matrix(val size: Int) {
    *
    * @return matrix with newly placed seeds.
    */
-  // FIXME: Does not populate as it should
-  def populateMatrix(tilesToSeed: List[(Int, Int)]):
+  def populateMatrix(matrix: Array[Array[Int]],
+                     tilesToSeed: List[(Int, Int, Int)]):
       Array[Array[Int]] = tilesToSeed match {
-    case Nil => this.matrix
+    case Nil => matrix
     case head :: tail => {
-      val tileValue = Array(2, 4)(scala.util.Random.nextInt(2))
-      this.matrix(head._1)(head._2) = tileValue
-      populateMatrix(tail)
+      matrix(head._1)(head._2) = head._3
+      populateMatrix(matrix, tail)
     }
   }
 
@@ -76,6 +75,7 @@ class Matrix(val size: Int) {
    *
    * @return list of tiles to occupy.
    */
+  // TODO: Also place seed, might need to change name of function
   private def positionsToSeed(seeds: Int,
                               freeTiles: List[(Int, Int)],
                               i: Int): List[(Int, Int)] = {

@@ -137,9 +137,14 @@ class MatrixTest extends AnyFunSuite with PrivateMethodTester {
     assert(emptyTiles == expectedEmptyTiles)
   }
 
-  test("select positions to seed") (pending)
+  test("select positions to seed when matrix is empty") (pending)
 
-  // FAIL & BUG: Need to fix the population problem
+  test("occupied tiles should not be selected as positions to seed") (pending)
+
+  test("no tile should be selected as position to seed when matrix is full") (pending)
+
+  test("find tiles when there are more requested tiles than tile in the matrix") (pending)
+
   test("populate matrix's first column when it's empty") {
     // 0 0 0 0     2 0 0 0
     // 0 0 0 0 ==> 2 0 0 0
@@ -147,41 +152,26 @@ class MatrixTest extends AnyFunSuite with PrivateMethodTester {
     // 0 0 0 0     2 0 0 0
     for (i <- Matrix.MINSIZE to Matrix.MAXSIZE) {
       val m = Matrix(i).get
-      val tilesToSeed = List.fill(i)((i - Matrix.MINSIZE, 0))
-      m.populateMatrix(tilesToSeed)
+      val tilesToSeed = List.tabulate(i)(n => (n, 0, 2))
+      m.populateMatrix(m.matrix, tilesToSeed)
       val populatedMatrix = Array.fill(i){2 +: Array.fill(i - 1){0}}
-
-      println(Matrix.matrixToString(m.matrix))
-      println(Matrix.matrixToString(populatedMatrix))
-      println("----------------")
 
       assert(Matrix.compareMatrices(m.matrix, populatedMatrix))
     }
   }
 
-  // TODO: Adapt to all accepted sizes
-  // FAIL & BUG: Need to fix the population problem
   test("populate matrix's first row when it's empty") {
     // 0 0 0 0     2 2 2 2
     // 0 0 0 0 ==> 0 0 0 0
     // 0 0 0 0 ==> 0 0 0 0
     // 0 0 0 0     0 0 0 0
-    val m = Matrix(4).get
-    val tilesToSeed = List((0, 0), (0, 1), (0, 2), (0, 3))
-    val populatedMatrix = Array(
-      Array(2, 2, 2, 2),
-      Array(0, 0, 0, 0),
-      Array(0, 0, 0, 0),
-      Array(0, 0, 0, 0)
-    )
+    for (i <- Matrix.MINSIZE to Matrix.MAXSIZE) {
+      val m = Matrix(i).get
+      val tilesToSeed = List.tabulate(i)(n => (0, n, 2))
+      val populatedMatrix = Array(Array.fill(i)(2)) ++ Array.fill(i - 1, i){0}
 
-    assert(Matrix.compareMatrices(m.populateMatrix(tilesToSeed),
-                                  populatedMatrix))
+      assert(Matrix.compareMatrices(m.populateMatrix(m.matrix, tilesToSeed),
+             populatedMatrix))
+    }
   }
-
-  test("populate matrix with content in it") (pending)
-
-  test("populate matrix with more seeds than tiles") (pending)
-
-  test("populate matrix when matrix is full") (pending)
 }
