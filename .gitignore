@@ -12,6 +12,9 @@
 # \__ \ _ \ | |
 # |___/___/ |_|
 #
+.cache
+.history
+.lib/
 dist/*
 target/
 lib_managed/
@@ -22,6 +25,8 @@ project/target/
 *.history
 *.cache
 *.lib/
+**/.bloop
+.bsp/
 
 
 #  ___
@@ -37,3 +42,15 @@ project/target/
 auto-save-list
 tramp
 .\#*
+
+
+#  __  __     _        _     
+# |  \/  |___| |_ __ _| |___ 
+# | |\/| / -_)  _/ _` | (_-< 
+# |_|  |_\___|\__\__,_|_/__/ 
+#                            
+.metals/
+.ammonite/
+metals.sbt
+metals/project
+project/metals.sbt
