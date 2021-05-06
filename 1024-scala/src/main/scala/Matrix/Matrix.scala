@@ -23,21 +23,6 @@ class Matrix[A: Default] private (val col: Int, val row: Int, elems: List[A])
     }
   }
 
-  private def matrixToStr(m: List[A],
-                          col: Int,
-                          row: Int,
-                          c: Int,
-                          r: Int): String =
-    (m, c, r) match {
-      case (Nil, _, _) => "] ]"
-      case (m, c, r) if c == col && r == row =>
-        "[ " + matrixToStr(m, col, row, c, r - 1)
-      case (m, c, r) if c == col => "[ " + matrixToStr(m, col, row, c - 1, r)
-      case (m, -1, r) => "] " + matrixToStr(m, col, row, col, r - 1)
-      case (head :: tail, c, r) =>
-        head.toString + " " + matrixToStr(tail, col, row, c - 1, r)
-  }
-
   def transposeMatrix(): Matrix[A] = transpose(elems, List(), row, col, 0, 0)
 
   private def transpose(m: List[A],
@@ -78,7 +63,23 @@ class Matrix[A: Default] private (val col: Int, val row: Int, elems: List[A])
 
   override def toString: String = matrixToStr(elems, col, row, col, row)
 
+  private def matrixToStr(m: List[A],
+                          col: Int,
+                          row: Int,
+                          c: Int,
+                          r: Int): String =
+    (m, c, r) match {
+      case (Nil, _, _) => "] ]"
+      case (m, c, r) if c == col && r == row =>
+        "[ " + matrixToStr(m, col, row, c, r - 1)
+      case (m, c, r) if c == col => "[ " + matrixToStr(m, col, row, c - 1, r)
+      case (m, -1, r) => "] " + matrixToStr(m, col, row, col, r - 1)
+      case (head :: tail, c, r) =>
+        head.toString + " " + matrixToStr(tail, col, row, c - 1, r)
+  }
+
   override def className = "Matrix"
+
 }
 
 object Matrix {
@@ -98,7 +99,8 @@ object Matrix {
   }
 
   def apply[A: Default](col: Int, row: Int, elems: List[A]): Option[Matrix[A]] =
-    if (col > 0 || row > 0) Some(new Matrix[A](col, row, elems))
+    if ((col > 0 || row > 0) && elems.size == col * row)
+      Some(new Matrix[A](col, row, elems))
     else None
 
 }
