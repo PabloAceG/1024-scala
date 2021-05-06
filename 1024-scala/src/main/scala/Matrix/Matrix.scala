@@ -3,6 +3,8 @@ package matrix
 import scala.collection.Iterable
 import scala.collection.Iterator
 import scala.collection.AbstractIterator
+import scala.math.sqrt
+import scala.math.floor
 
 import defaultValues.Default
 
@@ -31,7 +33,7 @@ class Matrix[A: Default] private (val col: Int, val row: Int, elems: List[A])
                           col: Int,
                           row: Int,
                           c: Int,
-                          r: Int): String = {
+                          r: Int): String =
     (m, c, r) match {
       case (Nil, _, _) => "] ]"
       case (m, c, r) if c == col && r == row =>
@@ -40,17 +42,42 @@ class Matrix[A: Default] private (val col: Int, val row: Int, elems: List[A])
       case (m, -1, r) => "] " + matrixToStr(m, col, row, col, r - 1)
       case (head :: tail, c, r) =>
         head.toString + " " + matrixToStr(tail, col, row, c - 1, r)
-    }
+  }
+
+  def transposeMatrix(): Matrix[A] = transpose(elems, List(), row, col, 0, 0)
+
+  private def transpose(m: List[A],
+                        newM: List[A],
+                        col: Int,
+                        row: Int,
+                        c: Int,
+                        r: Int): Matrix[A] =
+    if (r == row) Matrix[A](col, row, newM).get
+    else (c, r) match {
+      case (0, 0) => transpose(m, (m(0) :: Nil), col, row, 1, 0)
+      case (c, r) if c == col => transpose(m, newM, col, row, 0, r + 1)
+      case (c, r) => transpose(m, newM :+ m(row * c + r), col, row, c + 1, r)
   }
 }
 
 object Matrix {
+
   def apply[A: Default](): Option[Matrix[A]] = apply[A](4, 4)
 
   def apply[A: Default](size: Int): Option[Matrix[A]] = apply[A](size, size)
 
   def apply[A: Default](col: Int, row: Int): Option[Matrix[A]] =
-    if (col > 0 || row > 0)
-      Some(new Matrix[A](col, row, List.fill(col * row)(Default.value[A])))
+    apply[A](col, row, List.fill(col * row)(Default.value[A]))
+
+  def apply[A: Default](elems: List[A]): Option[Matrix[A]] = {
+    val length = elems.size
+    val size = sqrt(length)
+    if (size == floor(size)) apply[A](size.toInt, size.toInt, elems)
     else None
+  }
+
+  def apply[A: Default](col: Int, row: Int, elems: List[A]): Option[Matrix[A]] =
+    if (col > 0 || row > 0) Some(new Matrix[A](col, row, elems))
+    else None
+
 }
