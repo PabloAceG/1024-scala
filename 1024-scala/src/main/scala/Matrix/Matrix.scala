@@ -23,12 +23,6 @@ class Matrix[A: Default] private (val col: Int, val row: Int, elems: List[A])
     }
   }
 
-  override def className = "Matrix"
-
-  override def toList: List[A] = self.elems
-
-  override def toString: String = matrixToStr(elems, col, row, col, row)
-
   private def matrixToStr(m: List[A],
                           col: Int,
                           row: Int,
@@ -58,6 +52,33 @@ class Matrix[A: Default] private (val col: Int, val row: Int, elems: List[A])
       case (c, r) if c == col => transpose(m, newM, col, row, 0, r + 1)
       case (c, r) => transpose(m, newM :+ m(row * c + r), col, row, c + 1, r)
   }
+
+  @`inline` def == (m2: Matrix[A]): Boolean = compareMatrices(self, m2)
+  @`inline` def == (m2: List[A]): Boolean = compareMatrices(elems, m2)
+
+  @`inline` def != (m2: Matrix[A]): Boolean = !compareMatrices(self, m2)
+  @`inline` def != (m2: List[A]): Boolean = !compareMatrices(elems, m2)
+
+  private def compareMatrices[A](m1: Matrix[A], m2: Matrix[A]): Boolean =
+    if (m1.dimensions == m2.dimensions) compareMatrices(m1.toList, m2.toList)
+    else false
+
+  private def compareMatrices[A](m1: List[A], m2: List[A]): Boolean =
+    (m1, m2) match {
+      case (Nil, Nil) => true
+      case (h1 :: t1, h2 :: t2) if (h1 == h2) => compareMatrices(t1, t2)
+      case _ => false
+  }
+
+  def dimensions: (Int, Int) = (col, row)
+
+  override def size: Int = col * row
+
+  override def toList: List[A] = self.elems
+
+  override def toString: String = matrixToStr(elems, col, row, col, row)
+
+  override def className = "Matrix"
 }
 
 object Matrix {
