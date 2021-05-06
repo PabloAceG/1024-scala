@@ -7,5 +7,7 @@ lazy val root = (project in file(".")).
     name := "scalatest-example"
   )
 
+scalacOptions := Seq("-deprecation")
+
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.7" % Test
 libraryDependencies += "org.scalamock" %% "scalamock" % "5.1.0" % Test
