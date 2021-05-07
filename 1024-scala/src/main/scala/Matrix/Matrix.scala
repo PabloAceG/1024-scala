@@ -83,8 +83,10 @@ class Matrix[A: Default] private (val col: Int, val row: Int, elems: List[A])
 }
 
 object Matrix {
+  private val MINSIZE = 1
+  private val DEFAULTSIZE = 4
 
-  def apply[A: Default](): Option[Matrix[A]] = apply[A](4, 4)
+  def apply[A: Default](): Option[Matrix[A]] = apply[A](DEFAULTSIZE, DEFAULTSIZE)
 
   def apply[A: Default](size: Int): Option[Matrix[A]] = apply[A](size, size)
 
@@ -99,7 +101,7 @@ object Matrix {
   }
 
   def apply[A: Default](col: Int, row: Int, elems: List[A]): Option[Matrix[A]] =
-    if ((col > 0 || row > 0) && elems.size == col * row)
+    if ((col >= MINSIZE || row > MINSIZE) && elems.size == col * row)
       Some(new Matrix[A](col, row, elems))
     else None
 
