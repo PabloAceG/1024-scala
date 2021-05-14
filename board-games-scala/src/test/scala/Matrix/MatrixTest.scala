@@ -122,4 +122,11 @@ class MatrixTest extends AnyFunSuite {
     assert(mTransposed == correctMatrix)
   }
 
+  test ("populate matrix") {
+    val func = (n: Int) => 4
+    val m = Matrix[Int](3, 3).get.populate(func)
+    val correctMatrix = Matrix[Int](3, 3, List(4, 4, 4, 4, 4, 4, 4, 4, 4)).get
+    assert(m == correctMatrix)
+  }
+
 }

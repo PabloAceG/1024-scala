@@ -55,6 +55,8 @@ class Matrix[A: Default] private (val col: Int, val row: Int, elems: List[A])
       case _ => false
   }
 
+  def populate[B](f: (A) => B): Matrix[B] = Matrix[B](col, row, elems.map(f)).get
+
   def dimensions: (Int, Int) = (col, row)
 
   override def size: Int = col * row
@@ -101,7 +103,7 @@ object Matrix {
   }
 
   def apply[A: Default](col: Int, row: Int, elems: List[A]): Option[Matrix[A]] =
-    if ((col >= MINSIZE || row > MINSIZE) && elems.size == col * row)
+    if (col >= MINSIZE && row >= MINSIZE && elems.size == col * row)
       Some(new Matrix[A](col, row, elems))
     else None
 
