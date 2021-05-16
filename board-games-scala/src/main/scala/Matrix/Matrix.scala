@@ -23,7 +23,7 @@ class Matrix[A: Default] private (val col: Int, val row: Int, elems: List[A])
     }
   }
 
-  def transposeMatrix(): Matrix[A] = transpose(elems, List(), row, col, 0, 0)
+  def transposeMatrix: Matrix[A] = transpose(elems, List(), row, col, 0, 0)
 
   private def transpose(m: List[A],
                         newM: List[A],

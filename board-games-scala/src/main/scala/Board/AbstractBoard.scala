@@ -7,8 +7,6 @@ abstract class AbstractBoard[T <: AbstractBoard[T]] protected (val col: Int,
                                                                val points: Int,
                                                                matrix: Matrix[Int]) {
 
-  def populateBoard: T
-
   def moveUp: T
   def moveDown: T
   def moveLeft: T

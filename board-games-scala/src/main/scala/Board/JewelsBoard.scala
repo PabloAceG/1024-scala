@@ -10,21 +10,31 @@ class JewelsBoard private (override val col: Int,
                            matrix: Matrix[Int])
     extends AbstractBoard[JewelsBoard](col, row, points, matrix) {
 
-
-  override def populateBoard: JewelsBoard =
-    JewelsBoard(col, row, points, populate(matrix.toList)).get
-
-  private def populate(board: List[Int]): List[Int] =
-    board match {
-      case Nil => Nil
-      case head :: tail =>
-        Random.nextInt(JewelsBoard.NUMJEWELS) :: populate(tail)
-    }
-
   def moveUp: JewelsBoard = ???
   def moveDown: JewelsBoard = ???
   def moveLeft: JewelsBoard = ???
   def moveRight: JewelsBoard = ???
+
+  private def moveRight(m: List[Int],
+                        col: Int,
+                        c: Int,
+                        acc: Tuple2[Int, Int],
+                        points: Int): List[Int] =
+    (m, acc, c) match {
+      case (Nil, _, _) => Nil
+      case (head :: tail, (num, rep), c) if c == col && num < 3 =>
+        List.fill(rep)(num) ::: moveRight(tail, col, 1, (head, 0), points)
+      case (head :: tail, (num, rep), c) if c == col && num >= 3 =>
+        List.fill(rep)(0) ::: moveRight(tail, col, 1, (head, 0), points + num * rep)
+      case (head :: tail, (num, rep), c) if head == num =>
+        moveRight(tail, col, c + 1, (num, rep + 1), points)
+      case (head :: tail, (num, rep), c) if head != num && num < 3 =>
+        List.fill(rep)(num) ::: moveRight(tail, col, c + 1, (head, 0), points)
+      case (head :: tail, (num, rep), c) if head != num && num >= 3 =>
+        List.fill(rep)(0) ::: moveRight(tail, col, c + 1, (head, 0), points + num * rep)
+
+
+  }
 
   def getPrintableBoard: String = ???
 }
@@ -41,7 +51,8 @@ object JewelsBoard {
 
   def apply(col: Int, row: Int, points: Int): Option[JewelsBoard] = {
     val matrix = Matrix[Int](col, row)
-    if (matrix.isDefined) apply(col, row, points, matrix.get)
+    if (matrix.isDefined) apply(col, row, points,
+                                matrix.get.populate(_ => Random.nextInt(8) + 1))
     else None
   }
 
